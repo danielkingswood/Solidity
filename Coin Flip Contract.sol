@@ -18,20 +18,36 @@ contract CoinFlip {
     // player address variables - set player addressees to zero
     address payable player1 = payable(0x0);
     address payable player2 = payable(0x0);
+    // address is the type in solidity
+    // payable means the address is capable of receiving Ether
+    // 0x0 is a null address
+    // payable(0x0) is used to cst the null address to the address payable
 
     // player selection variables
     bytes32 p1selection;
     bool p2selection;
+    // bytes 32 type is a fixed-size array of 32 bytes
+    // typically stores hashes, strings etc
+    // bool type is true or false 
+    // p1selection stores value selected by P1
+    // p2selection stores value selected by P2
 
     // bet and expiration variables
     uint256 public bet;
     uint256 public expiration = 2**256-1; // set to max
+    // uint256 public refers to an unsigned integer of size 256 bits
+    // and the variable is publicly accessible meaning that it can be read by anyone
+    // expiration variable initially set to largest possible value 
 
     // get the hash only using solidity - Warning: don't run this on-chain as your choice will be visible!
     // this is using the "pure" modifier as it doesn't read or write to storage
     function getHash(bool choice, uint256 nonce) external pure returns (bytes32) {
         return keccak256(abi.encode(choice, nonce));
     }
+    // getHash function takes two inputs, choice and nonce. 
+    // keccak256 computes a hash using choice and nonce
+    // External indicates function can be called outside the contract
+    // pure means the function does not modify the state of the contract
 
     // player1 sets choice by giving a hash (hash = H(choice + nonce))
     function makeBet(bytes32 hash) external payable {
@@ -39,9 +55,10 @@ contract CoinFlip {
         require(player1 == payable(0x0));
         // check if bet > 0
         require(msg.value > 0);
-
         // get address of player 1
+        // require function is used to check, if condition is true, returns error if false
         player1 = payable(msg.sender);
+        //  
         // save player1 selection
         p1selection = hash;
         // store the bet amount
